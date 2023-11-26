@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import { Container, Typography, Button, Select, MenuItem, TextField, InputLabel, FormControl } from '@mui/material';
+
+// actions
+import { increment, decrement } from '../redux/app.slice';
 
 function DashBoard() {
   const navigate = useNavigate(); 
@@ -8,8 +12,9 @@ function DashBoard() {
   const [difficulty, setDifficulty] = useState('');
   const [type, setType] = useState('');
   const [questionAmount, setQuestionAmount] = useState('');
+  const dispatch = useDispatch();
+  const count = useSelector(state => state.app.value)
 
-  
   const handleCategoryChange = (event) => {
     setCategory(event.target.value);
   };
@@ -28,7 +33,6 @@ function DashBoard() {
 
   
   const handleSubmit = () => {
-    
     console.log(category, difficulty, type, questionAmount);    
     navigate('/question');
   };
@@ -38,6 +42,13 @@ function DashBoard() {
       <Typography variant="h2" component="h1" gutterBottom>
         Quiz App
       </Typography>
+
+      <div>
+          Demo redux toolkit
+          <button type="button" onClick={() => dispatch(decrement(1))}>-</button>
+          <span>{count}</span>
+          <button type="button"  onClick={() => dispatch(increment(2))}>+</button>
+        </div>
 
       <FormControl fullWidth margin="normal">
         <InputLabel id="category-label">Category</InputLabel>
