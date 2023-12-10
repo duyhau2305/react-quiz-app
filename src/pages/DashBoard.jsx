@@ -1,36 +1,75 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Container, Typography, Button, Select, MenuItem, TextField, InputLabel, FormControl } from '@mui/material';
+import axios from 'axios';
+import {
+  Container,
+  Typography,
+  Button,
+  Select,
+  MenuItem,
+  TextField,
+  InputLabel,
+  FormControl,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+} from '@mui/material';
 
-function DashBoard() {
-  const navigate = useNavigate(); 
-    const [category, setCategory] = useState('');
-  const [difficulty, setDifficulty] = useState('');
-  const [type, setType] = useState('');
+function Dashboard() {
+  const navigate = useNavigate();
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedDifficulty, setSelectedDifficulty] = useState('');
+  const [selectedType, setSelectedType] = useState('');
   const [questionAmount, setQuestionAmount] = useState('');
+  const [openModal, setOpenModal] = useState(false);
 
-  
+  useEffect(() => {
+    // Sử dụng Axios để tải danh sách các loại câu hỏi từ API
+    axios
+      .get('https://opentdb.com/api_category.php')
+      .then((response) => {
+        setCategories(response.data.trivia_categories);
+      })
+      .catch((error) => {
+        console.error('Error fetching categories:', error);
+      });
+  }, []);
+
   const handleCategoryChange = (event) => {
-    setCategory(event.target.value);
+    setSelectedCategory(event.target.value);
   };
 
   const handleDifficultyChange = (event) => {
-    setDifficulty(event.target.value);
+    setSelectedDifficulty(event.target.value);
   };
 
   const handleTypeChange = (event) => {
-    setType(event.target.value);
+    setSelectedType(event.target.value);
   };
 
   const handleQuestionAmountChange = (event) => {
     setQuestionAmount(event.target.value);
   };
 
-  
   const handleSubmit = () => {
-    
-    console.log(category, difficulty, type, questionAmount);    
-    navigate('/question');
+    if (!selectedCategory || !selectedDifficulty || !selectedType || !questionAmount) {
+      setOpenModal(true);
+    } else {
+      navigate('/question', {
+        state: {
+          amount: questionAmount,
+          category: selectedCategory,
+          difficulty: selectedDifficulty,
+          type: selectedType,
+        },
+      });
+    }
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
   };
 
   return (
@@ -43,13 +82,16 @@ function DashBoard() {
         <InputLabel id="category-label">Category</InputLabel>
         <Select
           labelId="category-label"
-          value={category}
+          value={selectedCategory}
           label="Category"
           onChange={handleCategoryChange}
         >
-          <MenuItem value="science">Science</MenuItem>
-          <MenuItem value="math">Math</MenuItem>
-          {/* ... thêm các options khác */}
+          <MenuItem value="">Select Category</MenuItem>
+          {categories.map((cat) => (
+            <MenuItem key={cat.id} value={cat.id}>
+              {cat.name}
+            </MenuItem>
+          ))}
         </Select>
       </FormControl>
 
@@ -57,10 +99,11 @@ function DashBoard() {
         <InputLabel id="difficulty-label">Difficulty</InputLabel>
         <Select
           labelId="difficulty-label"
-          value={difficulty}
+          value={selectedDifficulty}
           label="Difficulty"
           onChange={handleDifficultyChange}
         >
+         
           <MenuItem value="easy">Easy</MenuItem>
           <MenuItem value="medium">Medium</MenuItem>
           <MenuItem value="hard">Hard</MenuItem>
@@ -71,12 +114,13 @@ function DashBoard() {
         <InputLabel id="type-label">Type</InputLabel>
         <Select
           labelId="type-label"
-          value={type}
+          value={selectedType}
           label="Type"
           onChange={handleTypeChange}
         >
-          <MenuItem value="multiple-choice">Multiple Choice</MenuItem>
-          <MenuItem value="true-false">True / False</MenuItem>
+         
+          <MenuItem value="multiple">Multiple Choice</MenuItem>
+          <MenuItem value="boolean">True / False</MenuItem>
         </Select>
       </FormControl>
 
@@ -88,17 +132,30 @@ function DashBoard() {
         onChange={handleQuestionAmountChange}
       />
 
-      <Button 
-        variant="contained" 
-        color="primary" 
-        onClick={handleSubmit} 
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={handleSubmit}
         fullWidth
         sx={{ marginTop: 2 }}
       >
         GET STARTED
       </Button>
+
+      {/* Modal */}
+      <Dialog open={openModal} onClose={handleCloseModal}>
+        <DialogTitle>Missing Information</DialogTitle>
+        <DialogContent>
+          Please fill in all required fields.
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseModal} color="primary">
+            OK
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 }
 
-export default DashBoard;
+export default Dashboard;
