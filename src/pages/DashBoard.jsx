@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+<<<<<<< HEAD
 import axios from 'axios';
 import {
   Container,
@@ -36,6 +37,22 @@ function Dashboard() {
         console.error('Error fetching categories:', error);
       });
   }, []);
+=======
+import { useDispatch, useSelector } from 'react-redux';
+import { Container, Typography, Button, Select, MenuItem, TextField, InputLabel, FormControl } from '@mui/material';
+
+// actions
+import { increment, decrement } from '../redux/app.slice';
+
+function DashBoard() {
+  const navigate = useNavigate(); 
+    const [category, setCategory] = useState('');
+  const [difficulty, setDifficulty] = useState('');
+  const [type, setType] = useState('');
+  const [questionAmount, setQuestionAmount] = useState('');
+  const dispatch = useDispatch();
+  const count = useSelector(state => state.app.value)
+>>>>>>> 7c22be991e62533788ae2dd72727026dced3938e
 
   const handleCategoryChange = (event) => {
     setSelectedCategory(event.target.value);
@@ -54,6 +71,7 @@ function Dashboard() {
   };
 
   const handleSubmit = () => {
+<<<<<<< HEAD
     if (!selectedCategory || !selectedDifficulty || !selectedType || !questionAmount) {
       setOpenModal(true);
     } else {
@@ -70,6 +88,10 @@ function Dashboard() {
 
   const handleCloseModal = () => {
     setOpenModal(false);
+=======
+    console.log(category, difficulty, type, questionAmount);    
+    navigate('/question');
+>>>>>>> 7c22be991e62533788ae2dd72727026dced3938e
   };
 
   return (
@@ -77,6 +99,13 @@ function Dashboard() {
       <Typography variant="h2" component="h1" gutterBottom>
         Quiz App
       </Typography>
+
+      <div>
+          Demo redux toolkit
+          <button type="button" onClick={() => dispatch(decrement(1))}>-</button>
+          <span>{count}</span>
+          <button type="button"  onClick={() => dispatch(increment(2))}>+</button>
+        </div>
 
       <FormControl fullWidth margin="normal">
         <InputLabel id="category-label">Category</InputLabel>
