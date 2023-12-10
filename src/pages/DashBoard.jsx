@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-<<<<<<< HEAD
 import axios from 'axios';
+import { useForm, Controller } from "react-hook-form";
 import {
   Container,
   Typography,
@@ -26,6 +26,17 @@ function Dashboard() {
   const [questionAmount, setQuestionAmount] = useState('');
   const [openModal, setOpenModal] = useState(false);
 
+
+  const { register, handleSubmit, control, formState: { errors } } = useForm({
+    defaultValues: {
+      category: "",
+      difficulty: "",
+      type: "",
+      amount: "",
+    }
+  });
+  const onSubmit = data => console.log(data);
+
   useEffect(() => {
     // Sử dụng Axios để tải danh sách các loại câu hỏi từ API
     axios
@@ -37,22 +48,6 @@ function Dashboard() {
         console.error('Error fetching categories:', error);
       });
   }, []);
-=======
-import { useDispatch, useSelector } from 'react-redux';
-import { Container, Typography, Button, Select, MenuItem, TextField, InputLabel, FormControl } from '@mui/material';
-
-// actions
-import { increment, decrement } from '../redux/app.slice';
-
-function DashBoard() {
-  const navigate = useNavigate(); 
-    const [category, setCategory] = useState('');
-  const [difficulty, setDifficulty] = useState('');
-  const [type, setType] = useState('');
-  const [questionAmount, setQuestionAmount] = useState('');
-  const dispatch = useDispatch();
-  const count = useSelector(state => state.app.value)
->>>>>>> 7c22be991e62533788ae2dd72727026dced3938e
 
   const handleCategoryChange = (event) => {
     setSelectedCategory(event.target.value);
@@ -70,28 +65,23 @@ function DashBoard() {
     setQuestionAmount(event.target.value);
   };
 
-  const handleSubmit = () => {
-<<<<<<< HEAD
-    if (!selectedCategory || !selectedDifficulty || !selectedType || !questionAmount) {
-      setOpenModal(true);
-    } else {
-      navigate('/question', {
-        state: {
-          amount: questionAmount,
-          category: selectedCategory,
-          difficulty: selectedDifficulty,
-          type: selectedType,
-        },
-      });
-    }
-  };
+  // const handleSubmit = () => {
+  //   if (!selectedCategory || !selectedDifficulty || !selectedType || !questionAmount) {
+  //     setOpenModal(true);
+  //   } else {
+  //     navigate('/question', {
+  //       state: {
+  //         amount: questionAmount,
+  //         category: selectedCategory,
+  //         difficulty: selectedDifficulty,
+  //         type: selectedType,
+  //       },
+  //     });
+  //   }
+  // };
 
   const handleCloseModal = () => {
     setOpenModal(false);
-=======
-    console.log(category, difficulty, type, questionAmount);    
-    navigate('/question');
->>>>>>> 7c22be991e62533788ae2dd72727026dced3938e
   };
 
   return (
@@ -100,12 +90,43 @@ function DashBoard() {
         Quiz App
       </Typography>
 
-      <div>
-          Demo redux toolkit
-          <button type="button" onClick={() => dispatch(decrement(1))}>-</button>
-          <span>{count}</span>
-          <button type="button"  onClick={() => dispatch(increment(2))}>+</button>
-        </div>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <Controller
+          name="category"
+          control={control}
+          rules={{ required: true }}
+          render={({ field }) => (
+            <FormControl fullWidth margin="normal">
+              <InputLabel id={field.name}>Select Category</InputLabel>
+              <Select
+                labelId={field.name}
+                label="Category"
+                {...field}
+              >
+                {categories.map((cat) => (
+                  <MenuItem key={cat.id} value={cat.id}>
+                    {cat.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          )}
+        />
+        <Button
+          variant="contained"
+          color="primary"
+          type='submit'
+          fullWidth
+          sx={{ marginTop: 2 }}
+        >
+          GET STARTED
+        </Button>
+      </form>
+
+      <br />
+      <hr />
+
+      Pure form
 
       <FormControl fullWidth margin="normal">
         <InputLabel id="category-label">Category</InputLabel>
@@ -164,7 +185,7 @@ function DashBoard() {
       <Button
         variant="contained"
         color="primary"
-        onClick={handleSubmit}
+        // onClick={handleSubmit}
         fullWidth
         sx={{ marginTop: 2 }}
       >
