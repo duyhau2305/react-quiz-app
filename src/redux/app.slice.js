@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
   value: 0,
+  settings: {}
 }
 
 export const appSlice = createSlice({
@@ -13,11 +14,14 @@ export const appSlice = createSlice({
     },
     decrement: (state, action) => {
       state.value -= action.payload
+    },
+    setSettings: (state, action) => {
+      state.settings = action.payload
     }
   },
 })
 
 // Action creators are generated for each case reducer function
-export const { increment, decrement } = appSlice.actions
+export const { increment, decrement, setSettings } = appSlice.actions
 
 export default appSlice.reducer

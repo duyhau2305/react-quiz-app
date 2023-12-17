@@ -1,14 +1,29 @@
-import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
-import { Typography, Radio, RadioGroup, FormControlLabel, FormControl } from '@mui/material';
+import { decode } from 'html-entities';
+
+// mui core
+import { Typography, Box, Button } from '@mui/material';
 
 function Question() {
-  const location = useLocation();
-  const { amount, category, difficulty, type } = location.state;
+  const [questionIndex, setQuestionIndex] = useState(0);
   const [questions, setQuestions] = useState([]);
+  const [options, setOptions] = useState([]);
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
 
-  useEffect(() => {
+  // call api to get questions
+  React.useEffect(() => {
+    const amount = searchParams.get('amount');
+    const category = searchParams.get('category');
+    const difficulty = searchParams.get('difficulty');
+    const type = searchParams.get('type');
+
+    if (!amount || !category || !difficulty || !type) {
+      navigate('/');
+      return;
+    }
     // Sử dụng Axios để tải câu hỏi từ API dựa trên các tùy chọn
     axios
       .get(`https://opentdb.com/api.php?amount=${amount}&category=${category}&difficulty=${difficulty}&type=${type}`)
@@ -18,21 +33,66 @@ function Question() {
       .catch((error) => {
         console.error('Error fetching questions:', error);
       });
-  }, [amount, category, difficulty, type]);
+  }, []);
+
+  // set options & correct answer
+  React.useEffect(() => {
+    if(questions.length === 0) return;
+    const item = questions[questionIndex];
+    // combine random answers with correct answer
+    const options = [...item.incorrect_answers];
+    const randomIndex = Math.floor(Math.random() * options.length + 1);
+    options.splice(randomIndex, 0, item.correct_answer);
+    // [0, 1, 2] => randomIndex = 1 => [0, 1, 2].splice(1, 0, 'correct_answer') => [0, 'correct_answer', 1, 2]
+    // [0, 1, 2] => randomIndex = 2 => [0, 1, 2].splice(2, 0, 'correct_answer') => [0, 1, 'correct_answer', 2]
+    setOptions(options);
+  }, [questions, questionIndex])
+
+  function handleAnswer(answer) {
+    const item = questions[questionIndex];
+    const isCorrect = item.correct_answer === answer;
+
+    console.log('handleAnswer: ', {
+      questions,
+      isCorrect,
+      answer
+    })
+
+    if(isCorrect) {
+      // setScore(score + 1);
+    }
+
+    // next question
+    setQuestionIndex(questionIndex + 1);
+  }
+
+  console.log('questions: ', {
+    questions,
+    options
+  })
 
   return (
-    <div>
-      <h1>Questions</h1>
-      {questions.map((question, index) => (
+    <Box>
+      <Typography variant='h4' textAlign='center'>Question {questionIndex + 1}</Typography>
+      <Typography mt={5} >
+        {decode(questions[questionIndex]?.question || '')}
+      </Typography>
+      {options.map((option, index) => (
+        <Box mt={2} key={index} onClick={() => handleAnswer(option)}>
+          <Button variant="contained" fullWidth>{decode(option)}</Button>
+        </Box>
+      ))}
+
+      {/* <Box mt={5}>
+        Score: {score} / {questions.length}
+      </Box> */}
+      {/* {questions.map((question, index) => (
         <div key={index} style={{ marginBottom: '20px' }}>
-          {/* Hiển thị câu hỏi */}
           <Typography variant="h6" gutterBottom style={{ fontWeight: 'bold' }}>
             {question.question}
           </Typography>
 
-          {/* Hiển thị câu trả lời */}
           {question.type === 'multiple' ? (
-            // Nếu câu hỏi là Multiple Choice
             <FormControl component="fieldset">
               <RadioGroup name={`question${index}`}>
                 {question.incorrect_answers.map((answer, i) => (
@@ -59,7 +119,6 @@ function Question() {
               </RadioGroup>
             </FormControl>
           ) : (
-            // Nếu câu hỏi là True/False
             <FormControl component="fieldset">
               <RadioGroup name={`question${index}`}>
                 <FormControlLabel
@@ -84,8 +143,8 @@ function Question() {
             </FormControl>
           )}
         </div>
-      ))}
-    </div>
+      ))} */}
+    </Box>
   );
 }
 

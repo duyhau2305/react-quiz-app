@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { useForm, Controller } from "react-hook-form";
+import { useDispatch } from 'react-redux';
+
+// mui core
 import {
   Container,
   Typography,
@@ -11,12 +12,21 @@ import {
   TextField,
   InputLabel,
   FormControl,
+  FormHelperText
 } from '@mui/material';
 
+// libs
+import axios from 'axios';
+import { useForm, Controller } from "react-hook-form";
+
+// actions
+import { setSettings } from '../redux/app.slice';
+
 function Dashboard() {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
-  const { register, handleSubmit, control, formState: { errors } } = useForm({
+  const { handleSubmit, control, formState: { errors } } = useForm({
     defaultValues: {
       category: "",
       difficulty: "",
@@ -37,7 +47,8 @@ function Dashboard() {
   }, []);
 
   const onSubmit = data => {
-    navigate('/question', { state: data });
+    dispatch(setSettings(data))
+    navigate(`/question?amount=${data.amount}&category=${data.category}&difficulty=${data.difficulty}&type=${data.type}`);
   };
 
   return (
@@ -52,7 +63,11 @@ function Dashboard() {
           control={control}
           rules={{ required: true }}
           render={({ field }) => (
-            <FormControl fullWidth margin="normal">
+            <FormControl 
+              fullWidth 
+              margin="normal" 
+              error={errors.category}
+            >
               <InputLabel id={field.name}>Select Category</InputLabel>
               <Select
                 labelId={field.name}
@@ -65,6 +80,7 @@ function Dashboard() {
                   </MenuItem>
                 ))}
               </Select>
+              {errors.category && <FormHelperText>Please choose category</FormHelperText>}
             </FormControl>
           )}
         />
@@ -74,7 +90,7 @@ function Dashboard() {
           control={control}
           rules={{ required: true }}
           render={({ field }) => (
-            <FormControl fullWidth margin="normal">
+            <FormControl fullWidth margin="normal" >
               <InputLabel id={field.name}>Select Difficulty</InputLabel>
               <Select
                 labelId={field.name}
@@ -118,11 +134,12 @@ function Dashboard() {
                 label="Type"
                 {...field}
               >
-                {['Multiple Choice', 'True/False'].map((type) => (
-                  <MenuItem key={type} value={type.toLowerCase().replace(' ', '_')}>
-                    {type}
-                  </MenuItem>
-                ))}
+                <MenuItem value="multiple">
+                  Multiple Choice
+                </MenuItem>
+                <MenuItem value="boolean">
+                  True/False
+                </MenuItem>
               </Select>
             </FormControl>
           )}
