@@ -52,10 +52,8 @@ function Dashboard() {
   };
 
   return (
-    <Container maxWidth="sm">
-      <Typography variant="h2" component="h1" gutterBottom>
-        Quiz App
-      </Typography>
+    <>
+      <Typography variant='h4' textAlign='center'>Quiz App</Typography>
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <Controller
@@ -155,7 +153,7 @@ function Dashboard() {
           GET STARTED
         </Button>
       </form>
-    </Container>
+    </>
   );
 }
 

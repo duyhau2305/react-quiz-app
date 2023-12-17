@@ -2,7 +2,7 @@ import React, { Suspense, lazy } from 'react';
 import { Routes, Route } from 'react-router-dom';
 
 // mui core
-import { Container } from '@mui/material';
+import { Box, Container } from '@mui/material';
 
 const DashBoard = lazy(() => import('./pages/DashBoard'));
 const Question = lazy(() => import('./pages/Question'));
@@ -13,13 +13,14 @@ function App() {
    
       <Suspense fallback={<div>Loading...</div>}>
         <Container maxWidth="sm">
-          <Routes>
-            <Route path="/" element={<DashBoard />} />
-            <Route path="/question" element={<Question />} />
-            <Route path="/score" element={<Score />} />
-          </Routes>
+          <Box mt={5}>
+            <Routes>
+              <Route path="/" element={<DashBoard />} />
+              <Route path="/question" element={<Question />} />
+              <Route path="/score" element={<Score />} />
+            </Routes>
+          </Box>
         </Container>
-       
       </Suspense>
   
   );
