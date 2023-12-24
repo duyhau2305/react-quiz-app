@@ -10,6 +10,7 @@ function Question() {
   const [questionIndex, setQuestionIndex] = useState(0);
   const [questions, setQuestions] = useState([]);
   const [options, setOptions] = useState([]);
+  const [score,setScore] =useState(0);
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
@@ -59,11 +60,17 @@ function Question() {
     })
 
     if(isCorrect) {
-      // setScore(score + 1);
+      setScore(score + 1);
     }
 
     // next question
-    setQuestionIndex(questionIndex + 1);
+    const nextQuestionIndex = questionIndex + 1;
+    if (nextQuestionIndex < questions.length) {
+      setQuestionIndex(nextQuestionIndex);
+    } else {
+      // Navigate to Score component with the final score
+      navigate('/score', { state: { finalScore: score } });
+    }
   }
 
   console.log('questions: ', {
@@ -82,68 +89,9 @@ function Question() {
           <Button variant="contained" fullWidth>{decode(option)}</Button>
         </Box>
       ))}
+      <Typography variant="h6" mt={5}>Score: {score}</Typography> {/* Display the score */}
+      
 
-      {/* <Box mt={5}>
-        Score: {score} / {questions.length}
-      </Box> */}
-      {/* {questions.map((question, index) => (
-        <div key={index} style={{ marginBottom: '20px' }}>
-          <Typography variant="h6" gutterBottom style={{ fontWeight: 'bold' }}>
-            {question.question}
-          </Typography>
-
-          {question.type === 'multiple' ? (
-            <FormControl component="fieldset">
-              <RadioGroup name={`question${index}`}>
-                {question.incorrect_answers.map((answer, i) => (
-                  <FormControlLabel
-                    key={i}
-                    value={answer}
-                    control={<Radio />}
-                    label={
-                      <Typography variant="body1" style={{ marginLeft: '10px' }}>
-                        {answer}
-                      </Typography>
-                    }
-                  />
-                ))}
-                <FormControlLabel
-                  value={question.correct_answer}
-                  control={<Radio />}
-                  label={
-                    <Typography variant="body1" style={{ marginLeft: '10px', color: 'green' }}>
-                      {question.correct_answer}
-                    </Typography>
-                  }
-                />
-              </RadioGroup>
-            </FormControl>
-          ) : (
-            <FormControl component="fieldset">
-              <RadioGroup name={`question${index}`}>
-                <FormControlLabel
-                  value="True"
-                  control={<Radio />}
-                  label={
-                    <Typography variant="body1" style={{ marginLeft: '10px' }}>
-                      True
-                    </Typography>
-                  }
-                />
-                <FormControlLabel
-                  value="False"
-                  control={<Radio />}
-                  label={
-                    <Typography variant="body1" style={{ marginLeft: '10px' }}>
-                      False
-                    </Typography>
-                  }
-                />
-              </RadioGroup>
-            </FormControl>
-          )}
-        </div>
-      ))} */}
     </Box>
   );
 }
