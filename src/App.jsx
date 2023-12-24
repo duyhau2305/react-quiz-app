@@ -4,6 +4,7 @@ import { Routes, Route } from 'react-router-dom';
 // mui core
 import { Box, Container } from '@mui/material';
 import Login from './pages/Login';
+import SignUp from './pages/SignUp';
 
 const DashBoard = lazy(() => import('./pages/DashBoard'));
 const Question = lazy(() => import('./pages/Question'));
@@ -18,6 +19,7 @@ function App() {
             <Routes>
               <Route path="/dashboard" element={<DashBoard />} />
               <Route path="/" element={<Login/> }/>
+              <Route path="/signup" element={<SignUp />} />
               <Route path="/question" element={<Question />} />
               <Route path="/score" element={<Score />} />
             </Routes>
