@@ -3,6 +3,8 @@ import { Routes, Route } from 'react-router-dom';
 
 // mui core
 import { Box, Container } from '@mui/material';
+import Login from './pages/Login';
+import SignUp from './pages/SignUp';
 
 // guards
 import AuthGuard from './components/Auth/AuthGuard';
