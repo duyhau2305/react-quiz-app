@@ -10,14 +10,8 @@ function SignUp() {
 
   const onSubmit = data => {
     console.log(data);
-    // Here you would send the data to your server for sign up
+    
   };
-
-  // Function to handle navigation to the login page
-  const handleSignInClick = () => {
-    navigate('/'); // Navigate to the login route
-  };
-
   return (
     <Container component="main" maxWidth="xs">
       <Box
@@ -110,7 +104,7 @@ function SignUp() {
           </Button>
           <Typography variant="body2" sx={{ textAlign: 'center', mb: 2 }}>
             Already have an account?
-            <Button color="primary" onClick={handleSignInClick}>
+            <Button color="primary" onClick={() => navigate('/')}>
               Sign in
             </Button>
           </Typography>
